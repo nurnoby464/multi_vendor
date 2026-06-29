@@ -1,65 +1,67 @@
+"use client";
+
+import { CategoryIconLink } from "@/components/molecules";
+import { CategoryRail } from "@/components/organisms/CategoryRail";
+import { HeroBanner } from "@/components/organisms/HeroBanner";
+import { Navbar } from "@/components/organisms/Navbar";
+import {
+  BookOpen,
+  Home,
+  LeafIcon,
+  Shirt,
+  Smartphone,
+  Utensils,
+} from "lucide-react";
 import Image from "next/image";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div>
+      <HeroBanner
+        eyebrow="NEW COLLECTION"
+        headline="Grounded Living,"
+        headlineAccent="Elevated Design."
+        subheading="Bring the tranquility of nature into your home with our sustainably sourced electronics and artisanal kitchenware."
+        actions={[
+          {
+            label: "Shop The Collection",
+            href: "/collections/new",
+            variant: "solid",
+          },
+          {
+            label: "View Lookbook",
+            href: "/lookbook",
+            variant: "outline",
+          },
+        ]}
+        backgroundColor="#2d4a22"
+        color="primary"
+        align="left"
+        size="lg"
+        minHeight="lg"
+      />
+      <div className="px-5 mt-3">
+        <CategoryRail
+          heading="Explore by Category"
+          seeAllHref="/categories"
+          items={[
+            {
+              id: "electronics",
+              label: "Electronics",
+              icon: Smartphone,
+              src: "https://static.vecteezy.com/system/resources/thumbnails/057/068/323/small/single-fresh-red-strawberry-on-table-green-background-food-fruit-sweet-macro-juicy-plant-image-photo.jpg",
+            },
+            { id: "home", label: "Home & Living", icon: Home },
+            { id: "kitchen", label: "Kitchen", icon: Utensils },
+            { id: "garden", label: "Garden", icon: LeafIcon },
+            { id: "fashion", label: "Fashion", icon: Shirt },
+            { id: "books", label: "Books", icon: BookOpen },
+          ]}
+          color="neutral"
+          size="xl"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
+     
     </div>
   );
 }
