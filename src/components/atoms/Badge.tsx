@@ -49,7 +49,7 @@ const customVariantClass: Record<BadgeVariant, string> = {
   outline: "ds-custom-outline border",
 };
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+export interface BadgeProps extends Omit<React.HTMLAttributes<HTMLSpanElement>,"color"> {
   variant?: BadgeVariant;
   color?: ColorProp;
   size?: SizeProp;

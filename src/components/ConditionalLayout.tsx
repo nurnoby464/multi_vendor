@@ -18,12 +18,12 @@ export default function ConditionalLayout({
     <>
       {!isAdminOrDashboard && (
         <Suspense fallback={null}>
-          <Navbar/>
+          <Navbar />
         </Suspense>
       )}
-      {!isAdminOrDashboard}
+      {/* ✅ removed stray {!isAdminOrDashboard} boolean that was rendering as text */}
       <main className="overflow-hidden">{children}</main>
-      {!isAdminOrDashboard && <Footer></Footer>}
+      {!isAdminOrDashboard && <Footer />}
     </>
   );
 }

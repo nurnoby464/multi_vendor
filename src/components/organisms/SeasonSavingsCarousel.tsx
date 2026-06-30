@@ -47,7 +47,7 @@ const headingSize: Record<SizeToken, string> = {
 };
 
 /* Visible cards by breakpoint (CSS driven, we track "virtual" pages for dots) */
-const CARDS_PER_PAGE = 4;
+const CARDS_PER_PAGE = 10;
 
 /* ─── Component ──────────────────────────────────────────────── */
 

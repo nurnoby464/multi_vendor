@@ -28,29 +28,20 @@ export interface AuctionBidder {
 }
 
 export interface LiveAuctionPanelProps {
-  /** Panel label, e.g. "Live Auction" */
   label?: string;
-  /** Product / lot title */
   title: string;
-  /** Product subtitle or collection */
   subtitle?: string;
   description?: string;
   productImage?: string;
   productImageAlt?: string;
   currentBid?: number;
-  /** When the auction ends */
   endDate: Date | string;
   onExpire?: () => void;
-  /** Recent bidders shown in avatar stack */
   recentBidders?: AuctionBidder[];
-  /** Live viewer count */
   viewerCount?: number;
-  /** Bid controls */
   bidControls?: Omit<BidControlsProps, "color" | "size">;
-  /** True = auction closed / cannot bid */
   ended?: boolean;
   isLoading?: boolean;
-  /** Dark panel (matches the black card in the screenshot) */
   dark?: boolean;
   color?: ColorProp;
   size?: SizeToken;
@@ -69,15 +60,22 @@ const titleSize: Record<SizeToken, string> = {
 };
 
 const darkOverlayToken: Record<ColorToken, string> = {
-  primary: "from-primary/20",
+  primary:   "from-primary/20",
   secondary: "from-secondary/20",
-  tertiary: "from-tertiary/20",
-  success: "from-success/20",
-  warning: "from-warning/20",
-  danger: "from-danger/20",
-  info: "from-info/20",
-  neutral: "from-neutral/20",
+  tertiary:  "from-tertiary/20",
+  success:   "from-success/20",
+  warning:   "from-warning/20",
+  danger:    "from-danger/20",
+  info:      "from-info/20",
+  neutral:   "from-neutral/20",
 };
+
+/* ─── Helpers ─────────────────────────────────────────────────── */
+
+/** Normalise `Date | string` → `Date` once, at the top of render. */
+function toDate(value: Date | string): Date {
+  return value instanceof Date ? value : new Date(value);
+}
 
 /* ─── Component ──────────────────────────────────────────────── */
 
@@ -104,6 +102,9 @@ export function LiveAuctionPanel({
 }: LiveAuctionPanelProps) {
   const isCustom = isCustomColor(color);
   const colorToken = isCustom ? "primary" : (color as ColorToken);
+
+  // ✅ Normalise once — CountdownTimer only accepts Date
+  const endDateAsDate = toDate(endDate);
 
   if (isLoading) {
     return (
@@ -145,7 +146,6 @@ export function LiveAuctionPanel({
       )}
       aria-label={`${label}: ${title}`}
     >
-      {/* Subtle gradient overlay on dark */}
       {dark && (
         <div
           className={cn(
@@ -197,12 +197,7 @@ export function LiveAuctionPanel({
           {/* Title + subtitle */}
           <div className="flex flex-col gap-1">
             {subtitle && (
-              <p
-                className={cn(
-                  "text-sm",
-                  dark ? "text-white/50" : "text-text-muted",
-                )}
-              >
+              <p className={cn("text-sm", dark ? "text-white/50" : "text-text-muted")}>
                 {subtitle}
               </p>
             )}
@@ -252,9 +247,10 @@ export function LiveAuctionPanel({
               >
                 {ended ? "Ended" : "Ends in"}
               </span>
+              {/* ✅ targetDate is now always Date, color is ColorProp */}
               <CountdownTimer
-                targetDate={endDate}
-                {...onExpire!== undefined &&{onExpire}}
+                targetDate={endDateAsDate}
+                {...(onExpire !== undefined && { onExpire })}
                 variant="clock"
                 color={color}
                 size={size === "xs" ? "xs" : size === "xl" ? "lg" : "sm"}
@@ -266,7 +262,6 @@ export function LiveAuctionPanel({
           {/* Recent bidders */}
           {recentBidders.length > 0 && (
             <div className="flex items-center gap-2">
-              {/* Avatar stack */}
               <div className="flex -space-x-2">
                 {recentBidders.slice(0, 4).map((b) => (
                   <Avatar
@@ -275,16 +270,11 @@ export function LiveAuctionPanel({
                     size="xs"
                     color={color}
                     className="ring-2 ring-surface"
-                  {...b.avatarSrc !==undefined && {src:b.avatarSrc}}
+                    {...(b.avatarSrc !== undefined && { src: b.avatarSrc })}
                   />
                 ))}
               </div>
-              <span
-                className={cn(
-                  "text-xs",
-                  dark ? "text-white/50" : "text-text-muted",
-                )}
-              >
+              <span className={cn("text-xs", dark ? "text-white/50" : "text-text-muted")}>
                 {recentBidders.length} recent bid
                 {recentBidders.length !== 1 ? "s" : ""}
               </span>
@@ -305,7 +295,7 @@ export function LiveAuctionPanel({
                 color={color}
                 size={size === "xl" ? "md" : size === "xs" ? "xs" : "sm"}
                 disabled={ended}
-                {...currentBid !==undefined && {currentBid}}
+                {...(currentBid !== undefined && { currentBid })}
               />
             </div>
           )}

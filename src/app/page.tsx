@@ -1,67 +1,90 @@
 "use client";
 
-import { CategoryIconLink } from "@/components/molecules";
+import { useState } from "react";
 import { CategoryRail } from "@/components/organisms/CategoryRail";
 import { HeroBanner } from "@/components/organisms/HeroBanner";
-import { Navbar } from "@/components/organisms/Navbar";
 import {
-  BookOpen,
-  Home,
-  LeafIcon,
-  Shirt,
-  Smartphone,
-  Utensils,
-} from "lucide-react";
-import Image from "next/image";
+  CATEGORY_ITEMS,
+  BANNER_SLIDES,
+  DEAL_TABS,
+  DEAL_PRODUCTS,
+  SEASON_TABS,
+  SEASON_PRODUCTS,
+  GRID_PRODUCTS,
+  GRID_SORT_OPTIONS,
+} from "@/lib/mocData";
+import { DealCarousel } from "@/components/organisms/DealCarousel";
+import { SeasonSavingsCarousel } from "@/components/organisms/SeasonSavingsCarousel";
+import { ProductGrid } from "@/components/organisms/ProductGrid";
+import { ProductListingPage } from "@/components/template/ProductListingPage";
+import AuctionsPage from "@/components/template/AuctionsPage";
+import PreOwnedSectionDemo from "@/components/template/PreOwnedSectionView";
+import { HeroBannerCarousel } from "@/components/organisms/HeroBannerCarousel";
 
 export default function HomePage() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeCategoryId, setActiveCategoryId] = useState("electronics");
+
+  const slide = BANNER_SLIDES[currentSlide];
+
   return (
-    <div>
-      <HeroBanner
-        eyebrow="NEW COLLECTION"
-        headline="Grounded Living,"
-        headlineAccent="Elevated Design."
-        subheading="Bring the tranquility of nature into your home with our sustainably sourced electronics and artisanal kitchenware."
-        actions={[
-          {
-            label: "Shop The Collection",
-            href: "/collections/new",
-            variant: "solid",
-          },
-          {
-            label: "View Lookbook",
-            href: "/lookbook",
-            variant: "outline",
-          },
-        ]}
-        backgroundColor="#2d4a22"
-        color="primary"
-        align="left"
-        size="lg"
-        minHeight="lg"
-      />
-      <div className="px-5 mt-3">
+    <main className="min-h-screen">
+      
+      {/* ── Hero Banner ─────────────────────────────────── */}
+      <HeroBannerCarousel></HeroBannerCarousel>
+     
+
+      {/* ── Category Rail ────────────────────────────────── */}
+      <section className="px-5 mt-15">
         <CategoryRail
           heading="Explore by Category"
           seeAllHref="/categories"
-          items={[
-            {
-              id: "electronics",
-              label: "Electronics",
-              icon: Smartphone,
-              src: "https://static.vecteezy.com/system/resources/thumbnails/057/068/323/small/single-fresh-red-strawberry-on-table-green-background-food-fruit-sweet-macro-juicy-plant-image-photo.jpg",
-            },
-            { id: "home", label: "Home & Living", icon: Home },
-            { id: "kitchen", label: "Kitchen", icon: Utensils },
-            { id: "garden", label: "Garden", icon: LeafIcon },
-            { id: "fashion", label: "Fashion", icon: Shirt },
-            { id: "books", label: "Books", icon: BookOpen },
-          ]}
-          color="neutral"
+          items={CATEGORY_ITEMS}
+          activeId={activeCategoryId}
+          onSelect={setActiveCategoryId}
+          color="secondary" // ✅ ring color follows active banner slide
           size="xl"
+          showArrows
         />
-      </div>
-     
-    </div>
+      </section>
+
+      <section className="mx-5 mt-20 bg-surface border border-border rounded-2xl shadow-sm">
+        <div className="py-10 px-7">
+          <DealCarousel
+            heading="50% Off — Limited Time"
+            subheading="Deals refreshed every 24 hours"
+            eyebrow="Flash Sale"
+            tabs={DEAL_TABS}
+            products={DEAL_PRODUCTS}
+            color="secondary"
+            size="sm"
+            autoPlayMs={5000}
+            onProductClick={(id) => console.log("clicked:", id)}
+            onProductAddToCart={(id) => console.log("add to cart:", id)}
+          />
+        </div>
+      </section>
+      <section className="mt-20 px-7 mx-auto">
+        <SeasonSavingsCarousel
+          heading="Discover Season Savings"
+          subheading="Curated picks updated weekly"
+          eyebrow="Editor's Pick"
+          tabs={SEASON_TABS}
+          products={SEASON_PRODUCTS}
+          color="primary"
+          size="md"
+          autoPlayMs={5000}
+          onProductClick={(id) => console.log("clicked:", id)}
+          onProductAddToCart={(id) => console.log("add to cart:", id)}
+        />
+      </section>
+
+      <ProductListingPage></ProductListingPage>
+      <AuctionsPage></AuctionsPage>
+      <section className="mt-20 mb-5 px-10 mx-auto">
+        <PreOwnedSectionDemo></PreOwnedSectionDemo>
+      </section>
+      
+    </main>
   );
 }

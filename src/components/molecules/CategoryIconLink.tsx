@@ -30,12 +30,20 @@ export interface CategoryIconLinkProps extends Omit<
   className?: string;
 }
 
-const avatarSize: Record<SizeToken, SizeProp> = {
-  xs: "xs",
-  sm: "sm",
-  md: "md",
-  lg: "lg",
-  xl: "xl",
+const bubbleSize: Record<SizeToken, string> = {
+  xs: "h-6 w-6",
+  sm: "h-8 w-8",
+  md: "h-10 w-10",
+  lg: "h-12 w-12",
+  xl: "h-16 w-16",
+};
+
+const iconSize: Record<SizeToken, number> = {
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 20,
+  xl: 24,
 };
 
 const labelSize: Record<SizeToken, string> = {
@@ -47,14 +55,25 @@ const labelSize: Record<SizeToken, string> = {
 };
 
 const ringClass: Record<ColorToken, string> = {
-  primary: "ring-2 ring-primary ring-offset-2 ring-offset-surface",
+  primary:   "ring-2 ring-primary   ring-offset-2 ring-offset-surface",
   secondary: "ring-2 ring-secondary ring-offset-2 ring-offset-surface",
-  tertiary: "ring-2 ring-tertiary ring-offset-2 ring-offset-surface",
-  success: "ring-2 ring-success ring-offset-2 ring-offset-surface",
-  warning: "ring-2 ring-warning ring-offset-2 ring-offset-surface",
-  danger: "ring-2 ring-danger ring-offset-2 ring-offset-surface",
-  info: "ring-2 ring-info ring-offset-2 ring-offset-surface",
-  neutral: "ring-2 ring-neutral ring-offset-2 ring-offset-surface",
+  tertiary:  "ring-2 ring-tertiary  ring-offset-2 ring-offset-surface",
+  success:   "ring-2 ring-success   ring-offset-2 ring-offset-surface",
+  warning:   "ring-2 ring-warning   ring-offset-2 ring-offset-surface",
+  danger:    "ring-2 ring-danger    ring-offset-2 ring-offset-surface",
+  info:      "ring-2 ring-info      ring-offset-2 ring-offset-surface",
+  neutral:   "ring-2 ring-neutral   ring-offset-2 ring-offset-surface",
+};
+
+const hoverRingClass: Record<ColorToken, string> = {
+  primary:   "group-hover:ring-2 group-hover:ring-primary/50   group-hover:ring-offset-2 group-hover:ring-offset-surface",
+  secondary: "group-hover:ring-2 group-hover:ring-secondary/50 group-hover:ring-offset-2 group-hover:ring-offset-surface",
+  tertiary:  "group-hover:ring-2 group-hover:ring-tertiary/50  group-hover:ring-offset-2 group-hover:ring-offset-surface",
+  success:   "group-hover:ring-2 group-hover:ring-success/50   group-hover:ring-offset-2 group-hover:ring-offset-surface",
+  warning:   "group-hover:ring-2 group-hover:ring-warning/50   group-hover:ring-offset-2 group-hover:ring-offset-surface",
+  danger:    "group-hover:ring-2 group-hover:ring-danger/50    group-hover:ring-offset-2 group-hover:ring-offset-surface",
+  info:      "group-hover:ring-2 group-hover:ring-info/50      group-hover:ring-offset-2 group-hover:ring-offset-surface",
+  neutral:   "group-hover:ring-2 group-hover:ring-neutral/50   group-hover:ring-offset-2 group-hover:ring-offset-surface",
 };
 
 export function CategoryIconLink({
@@ -74,63 +93,80 @@ export function CategoryIconLink({
   const isCustom = isCustomColor(color);
   const isCustomSz = isCustomSize(size);
   const sizeToken = isCustomSz ? "md" : (size as SizeToken);
-  const avSize = isCustomSz ? size : avatarSize[sizeToken];
+  const avSize = isCustomSz ? size : sizeToken;
 
   const activeRing = isCustom
-    ? `ring-2 ring-offset-2 ring-offset-surface`
+    ? "ring-2 ring-offset-2 ring-offset-surface"
     : ringClass[color as ColorToken];
 
-  // Get first letter for fallback
+  const hoverRing = isCustom
+    ? "group-hover:ring-2 group-hover:ring-offset-2 group-hover:ring-offset-surface"
+    : hoverRingClass[color as ColorToken];
+
   const firstLetter = label.charAt(0).toUpperCase();
 
+  // ✅ Single wrapper lifts BOTH bubble + label together
   const content = (
-    <>
-      {/* Avatar bubble */}
+    <span
+      className={cn(
+        "inline-flex items-center",
+        "transition-transform duration-200 ease-out group-hover:-translate-y-1",
+        layout === "vertical" ? "flex-col gap-1.5" : "flex-row gap-2",
+      )}
+    >
+      {/* Bubble */}
       <span className="relative inline-flex shrink-0">
-        <Avatar
-          name={label}
-          color={color}
-          size={avSize}
-          className={cn("transition-all duration-200", active && activeRing)}
-          {...(src !== undefined && { src })}
-          style={
-            active && isCustom
-              ? ({ "--tw-ring-color": color.bg } as React.CSSProperties)
-              : undefined
-          }
-        >
-          {/* Content inside avatar */}
-          <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            {src ? (
-              // If src exists, Avatar component handles the image
-              null
-            ) : IconComp ? (
-              // If icon exists and no src, show icon
+        {src ? (
+         <Avatar
+  name={label}
+  color={color}
+  size={avSize}
+  src={src}
+  shape="circle"          // ✅ explicitly set
+  className={cn(
+    "transition-all duration-200",
+    active ? activeRing : hoverRing,
+  )}
+  style={
+    active && isCustom
+      ? ({ "--tw-ring-color": (color as { bg: string }).bg } as React.CSSProperties)
+      : undefined
+  }
+/>
+        ) : (
+          <span
+            className={cn(
+              "inline-flex items-center justify-center rounded-full",
+              "transition-all duration-200",
+              bubbleSize[sizeToken],
+              isCustom ? "bg-[var(--ds-bg)]/10" : `bg-${color}/10`,
+              active ? activeRing : hoverRing,
+            )}
+            style={isCustom ? customColorVars(color) : undefined}
+          >
+            {IconComp ? (
               <IconComp
-                size={
-                  sizeToken === "xs"
-                    ? 12
-                    : sizeToken === "sm"
-                      ? 14
-                      : sizeToken === "lg"
-                        ? 20
-                        : sizeToken === "xl"
-                          ? 24
-                          : 16
-                }
+                size={iconSize[sizeToken]}
                 strokeWidth={2}
                 aria-hidden
-                className="text-current opacity-90"
+                className={cn(
+                  "transition-colors duration-200",
+                  isCustom ? "text-[var(--ds-bg)]" : `text-${color}`,
+                )}
               />
             ) : (
-              // If no src and no icon, show first letter
-              <span className="text-sm font-medium text-current">
+              <span
+                className={cn(
+                  "font-medium",
+                  isCustom ? "text-[var(--ds-bg)]" : `text-${color}`,
+                )}
+              >
                 {firstLetter}
               </span>
             )}
           </span>
-        </Avatar>
-        
+        )}
+
         {/* Count badge */}
         {typeof count === "number" && count > 0 && (
           <span className="absolute -top-1 -right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-danger px-0.5 text-[9px] font-bold text-white">
@@ -139,49 +175,39 @@ export function CategoryIconLink({
         )}
       </span>
 
-      {/* Label */}
+      {/* Label — now inside the lifting wrapper */}
       <span
         className={cn(
           "font-medium text-text-muted transition-colors duration-200",
           labelSize[sizeToken],
           active && (isCustom ? "text-[var(--ds-bg)]" : `text-${color}`),
+          "group-hover:text-text",
           layout === "vertical" ? "text-center leading-tight" : "",
         )}
         style={active && isCustom ? customColorVars(color) : undefined}
       >
         {label}
       </span>
-    </>
+    </span>
   );
 
+  // ✅ Outer element no longer controls flex-col/gap — inner content wrapper does
   const sharedClass = cn(
-    "group inline-flex shrink-0 cursor-pointer items-center",
-    "transition-opacity hover:opacity-80",
+    "group inline-flex shrink-0 cursor-pointer items-center justify-center",
     "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
-    layout === "vertical" ? "flex-col gap-1.5" : "flex-row gap-2",
     className,
   );
 
   if (asButton) {
     return (
-      <button
-        type="button"
-        aria-pressed={active}
-        className={sharedClass}
-        onClick={onClick}
-      >
+      <button type="button" aria-pressed={active} className={sharedClass} onClick={onClick}>
         {content}
       </button>
     );
   }
 
   return (
-    <a
-      aria-current={active ? "page" : undefined}
-      className={sharedClass}
-      onClick={onClick}
-      {...props}
-    >
+    <a aria-current={active ? "page" : undefined} className={sharedClass} onClick={onClick} {...props}>
       {content}
     </a>
   );

@@ -11,7 +11,7 @@ import {
   type SizeToken,
   type SizeProp,
 } from "@/lib/types";
-import type { LucideProps } from "lucide-react";
+import type { LucideIcon, LucideProps } from "lucide-react";
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
@@ -20,7 +20,7 @@ export interface CategoryItem {
   label: string;
   href?: string;
   src?: string;
-  icon?: React.ComponentType<LucideProps>;
+  icon?: LucideIcon;
   count?: number;
 }
 
@@ -150,9 +150,9 @@ export function CategoryRail({
   }
 
   return (
-    <section className={cn("w-full", className)} aria-label={heading}>
+    <section className={cn("w-full  ", className)} aria-label={heading}>
       {/* Header row */}
-      <div className="flex items-center justify-between mb-4 sm:mb-5">
+      <div className="flex items-center justify-between  ">
         <h2
           className={cn(
             "font-bold text-text tracking-tight",
@@ -228,7 +228,7 @@ export function CategoryRail({
       <div
         ref={scrollRef}
         className={cn(
-          "flex gap-4 sm:gap-6 overflow-x-auto",
+          "flex gap-4 sm:gap-6 overflow-x-auto pt-5 ",
           "scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]",
           "[&::-webkit-scrollbar]:hidden",
           "pb-2 -mb-2" /* prevent clip on focus rings */,

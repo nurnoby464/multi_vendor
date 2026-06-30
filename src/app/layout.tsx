@@ -1,18 +1,12 @@
+// NO "use client"
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { THEME_INIT_SCRIPT } from "@/components/atoms/ThemeToggle";
+import { THEME_INIT_SCRIPT } from "@/lib/theme-script";
 import ConditionalLayout from "@/components/ConditionalLayout";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,8 +22,20 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      {/*
+        suppressHydrationWarning on <head> tells React to skip diffing
+        its children — Next.js injects its own scripts into <head> on the
+        server which causes the structural mismatch. This single prop
+        silences it without touching dangerouslySetInnerHTML or <Script>.
+        The theme-init <script> with dangerouslySetInnerHTML is then safe
+        because React won't reconcile inside this <head> at all.
+      */}
+      <head suppressHydrationWarning>
+        <script
+          id="theme-init"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <ConditionalLayout>{children}</ConditionalLayout>

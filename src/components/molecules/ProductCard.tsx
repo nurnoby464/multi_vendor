@@ -219,8 +219,8 @@ export function ProductCard({
         {/* Price row */}
         <div
           className={cn(
-            "flex items-center",
-            compact ? "justify-between" : "justify-between mt-auto",
+            "flex items-center justify-between gap-2 flex-wrap",
++           !compact && "mt-auto",
           )}
         >
           {typeof price === "number" && (
@@ -228,7 +228,7 @@ export function ProductCard({
               value={price}
               currency={currency}
               color={color}
-              size={compact ? "sm" : "md"}
+              size={compact ? "sm" : "md"} layout={compact ? "row" : "col"}
               showDiscountBadge={!compact && !!originalPrice}
               {...(originalPrice !== undefined && {
                 originalValue: originalPrice,
@@ -245,6 +245,7 @@ export function ProductCard({
               iconOnly
               aria-label={inCart ? "In cart" : "Add to cart"}
               status={addToCartStatus}
+               className="shrink-0"
               onClick={(e) => {
                 e.preventDefault();
                 onAddToCart?.();

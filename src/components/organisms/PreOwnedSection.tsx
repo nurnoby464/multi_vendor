@@ -49,7 +49,7 @@ const headingSize: Record<SizeToken, string> = {
   xl: "text-4xl sm:text-5xl",
 };
 
-const CARDS_PER_PAGE = 4;
+const CARDS_PER_PAGE = 10;
 
 /* ─── Component ──────────────────────────────────────────────── */
 
@@ -166,8 +166,8 @@ const { activeIndex, prev, next, goTo } = useCarousel({
             count={pageCount}
             activeIndex={activeIndex}
             onChange={goTo}
-            onPrev={prev}
-            onNext={next}
+            // onPrev={prev}
+            // onNext={next}
             color={color}
             size={size === "xl" ? "lg" : size === "xs" ? "xs" : "sm"}
             showArrows

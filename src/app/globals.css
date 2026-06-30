@@ -192,3 +192,40 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-border);
+  }
+
+  /* Smooth theme transition */
+  *,
+  *::before,
+  *::after {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+  }
+
+  /* But don't animate things that shouldn't transition */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+      color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+}

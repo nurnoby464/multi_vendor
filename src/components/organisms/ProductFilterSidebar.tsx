@@ -46,16 +46,16 @@ const headingSize: Record<SizeToken, string> = {
   xs: "text-sm", sm: "text-sm", md: "text-base", lg: "text-lg", xl: "text-xl",
 };
 
-const tokenBorderColor: Record<ColorToken, string> = {
-  primary: "focus:border-primary",
-  secondary: "focus:border-secondary",
-  tertiary: "focus:border-tertiary",
-  success: "focus:border-success",
-  warning: "focus:border-warning",
-  danger: "focus:border-danger",
-  info: "focus:border-info",
-  neutral: "focus:border-neutral",
-};
+// const tokenBorderColor: Record<ColorToken, string> = {
+//   primary: "focus:border-primary",
+//   secondary: "focus:border-secondary",
+//   tertiary: "focus:border-tertiary",
+//   success: "focus:border-success",
+//   warning: "focus:border-warning",
+//   danger: "focus:border-danger",
+//   info: "focus:border-info",
+//   neutral: "focus:border-neutral",
+// };
 
 /* ─── Component ──────────────────────────────────────────────── */
 

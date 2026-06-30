@@ -175,7 +175,7 @@ export function FilterGroup({
                     />
                     <span
                       className={cn(
-                        "rounded-[var(--radius-ds-xs)] border-2 transition-colors duration-150",
+                        "rounded-[var(--radius-ds-sm)] border-2 transition-colors duration-150",
                         "focus-visible:ring-2 focus-visible:ring-offset-1",
                         checkboxSize[size],
                         focusRing[colorToken],

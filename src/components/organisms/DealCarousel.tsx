@@ -75,22 +75,39 @@ export function DealCarousel({
   className,
 }: DealCarouselProps) {
   const [activeTab, setActiveTab] = React.useState(tabs[0]?.id ?? "__all__");
+  const [currentPage, setCurrentPage] = React.useState(0); // ✅ explicit page state
+
+  const ITEMS_PER_PAGE = 10;
 
   const isCustom = isCustomColor(color);
   const colorToken = isCustom ? "primary" : (color as ColorToken);
 
-  /* Filter by active tab */
+  // Filter by active tab
   const filtered = React.useMemo(() => {
     if (!tabs.length || activeTab === "__all__") return products;
     return products.filter((p) => !p.tabId || p.tabId === activeTab);
   }, [products, tabs, activeTab]);
 
-  const { activeIndex, prev, next, goTo, canPrev, canNext } = useCarousel({
-    count: filtered.length,
-    ...(autoPlayMs !== undefined && { autoPlayMs }),
-  });
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
 
-  /* Visible count via CSS grid, but we track one "page" index for mobile dots */
+  // ✅ Reset to page 0 when tab changes
+  React.useEffect(() => {
+    setCurrentPage(0);
+  }, [activeTab]);
+
+  // ✅ Slice only the current page's products
+  const visibleProducts = filtered.slice(
+    currentPage * ITEMS_PER_PAGE,
+    (currentPage + 1) * ITEMS_PER_PAGE,
+  );
+
+  function prev() {
+    setCurrentPage((p) => Math.max(0, p - 1));
+  }
+  function next() {
+    setCurrentPage((p) => Math.min(totalPages - 1, p + 1));
+  }
+
   return (
     <section className={cn("w-full", className)} aria-label={heading}>
       {/* Header */}
@@ -111,11 +128,7 @@ export function DealCarousel({
 
         {/* Tab filter chips */}
         {tabs.length > 0 && (
-          <div
-            className="flex flex-wrap gap-2"
-            role="tablist"
-            aria-label="Deal categories"
-          >
+          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Deal categories">
             {tabs.map((tab) => (
               <Chip
                 key={tab.id}
@@ -133,19 +146,15 @@ export function DealCarousel({
         )}
       </div>
 
-      {/* Carousel */}
-      <SwipeCarousel
-        onSwipeLeft={() => next()}
-        onSwipeRight={() => prev()}
-      >
-        {/* Responsive grid — on small screens show 1–2 cards, bigger shows 4 */}
+      {/* ✅ Grid shows only current page's products */}
+      <SwipeCarousel onSwipeLeft={next} onSwipeRight={prev}>
         <div
           className="grid gap-4"
           style={{
             gridTemplateColumns: `repeat(auto-fill, minmax(min(100%, 220px), 1fr))`,
           }}
         >
-          {filtered.map((product) => (
+          {visibleProducts.map((product) => (
             <ProductCard
               key={product.id}
               {...product}
@@ -158,18 +167,18 @@ export function DealCarousel({
         </div>
       </SwipeCarousel>
 
-      {/* Pagination — only visible when enough products exist */}
-      {filtered.length > 4 && (
+      {/* ✅ Pagination — driven by totalPages */}
+      {totalPages > 1 && (
         <div className="flex justify-center mt-5">
           <PaginationDots
-            count={Math.ceil(filtered.length / 4)}
-            activeIndex={Math.floor(activeIndex / 4)}
-            onChange={(i) => goTo(i * 4)}
+            count={totalPages}
+            activeIndex={currentPage}
+            onChange={setCurrentPage}
             onPrev={prev}
             onNext={next}
             color={color}
             size={size === "xl" ? "lg" : size === "xs" ? "xs" : "sm"}
-            showArrows={true}
+            showArrows
           />
         </div>
       )}

@@ -2,7 +2,15 @@
 
 import * as React from "react";
 import { cn, customColorVars, customSizeVars } from "@/lib/utils";
-import { isCustomColor, isCustomSize, type ColorProp, type ColorToken, type SizeProp, type SizeToken } from "@/lib/types";
+import {
+  isCustomColor,
+  isCustomSize,
+  type ColorProp,
+  type ColorToken,
+  type SizeProp,
+  type SizeToken,
+} from "@/lib/types";
+import Image from "next/image";
 
 const sizeClasses: Record<SizeToken, string> = {
   xs: "h-6 w-6 text-[10px]",
@@ -35,10 +43,12 @@ const statusDotColor: Record<"online" | "offline" | "busy" | "away", string> = {
   away: "bg-warning",
 };
 
-export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
+export interface AvatarProps extends Omit<
+  React.HTMLAttributes<HTMLSpanElement>,
+  "color"
+> {
   src?: string;
   alt?: string;
-  /** Shown when there's no `src`, or while it fails to load. */
   name?: string;
   shape?: "circle" | "square";
   color?: ColorProp;
@@ -51,7 +61,17 @@ function initials(name: string) {
   return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
 }
 
-export function Avatar({ src, alt, name = "", shape = "circle", color = "primary", size = "md", status, className, ...props }: AvatarProps) {
+export function Avatar({
+  src,
+  alt,
+  name = "",
+  shape = "circle",
+  color = "primary",
+  size = "md",
+  status,
+  className,
+  ...props
+}: AvatarProps) {
   const [failed, setFailed] = React.useState(false);
   const isCustom = isCustomColor(color);
   const isCustomSz = isCustomSize(size);
@@ -59,19 +79,43 @@ export function Avatar({ src, alt, name = "", shape = "circle", color = "primary
 
   return (
     <span
-      className={cn("relative inline-flex shrink-0", !isCustomSz && sizeClasses[size as SizeToken], className)}
+      className={cn(
+        "relative inline-flex shrink-0",
+        !isCustomSz && sizeClasses[size as SizeToken],
+         shape === "circle" ? "rounded-full" : "rounded-[var(--radius-ds-md)]",
+        className,
+      )}
       style={customSizeVars(isCustomSz ? size : undefined)}
       {...props}
     >
       {showImage ? (
-        // eslint-disable-next-line @next/next/no-img-element -- generic atom, consumers may swap for next/image
-        <img
-          src={src}
-          alt={alt ?? name}
-          onError={() => setFailed(true)}
-          className={cn("h-full w-full object-cover", shape === "circle" ? "rounded-full" : "rounded-[var(--radius-ds-md)]")}
-        />
+        <span
+          className={cn(
+            "relative block h-full w-full overflow-hidden",
+            shape === "circle" ? "rounded-full" : "rounded-[var(--radius-ds-md)]",
+          )}
+        >
+          <Image
+            src={src}
+            alt={alt ?? name}
+            fill
+            sizes={
+              isCustomSz ? "64px" : ({
+                xs: "24px",
+                sm: "32px",
+                md: "40px",
+                lg: "48px",
+                xl: "64px",
+              } as Record<SizeToken, string>)[size as SizeToken]
+            }
+            quality={90}
+            onError={() => setFailed(true)}
+            loading="lazy"
+            className="object-cover"
+          />
+        </span>
       ) : (
+        // ✅ Fixed: correct classes for fallback initials bubble
         <span
           className={cn(
             "flex h-full w-full items-center justify-center font-semibold",
@@ -83,6 +127,7 @@ export function Avatar({ src, alt, name = "", shape = "circle", color = "primary
           {name ? initials(name) : null}
         </span>
       )}
+
       {status && (
         <span
           className={cn(
